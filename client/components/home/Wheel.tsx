@@ -47,6 +47,8 @@ const Wheel = ({ data }: WheelProps) => {
 
   const [isFinalDish, setIsFinalDish] = useState(false);
 
+  const [resetCount, setResetCount] = useState(5);
+
   const floatingAnimes = useRef(
     [0, 1, 2, 3].map(() => new Animated.Value(0))
   ).current;
@@ -225,16 +227,17 @@ const Wheel = ({ data }: WheelProps) => {
     const prevSelectedFoods = await asyncStorage.getItem(
       "food-tracking-selected-foods"
     );
+    const now = new Date().getTime();
     if (prevSelectedFoods) {
       const parsedPrevData = JSON.parse(prevSelectedFoods);
       await asyncStorage.setItem(
         "food-tracking-selected-foods",
-        JSON.stringify([selectedDish, ...parsedPrevData])
+        JSON.stringify([{ ...selectedDish, now }, ...parsedPrevData])
       );
     } else {
       await asyncStorage.setItem(
         "food-tracking-selected-foods",
-        JSON.stringify([selectedDish])
+        JSON.stringify([{ ...selectedDish, now }])
       );
     }
     setFinalDish(selectedDish);
@@ -247,10 +250,48 @@ const Wheel = ({ data }: WheelProps) => {
         useNativeDriver: true,
       }),
     ]).start(() => {
+      setResetCount(5);
       setSelectedDish(null);
       setIsRetry(false);
       setIsFinalDish(true);
+      handleReset();
     });
+  };
+
+  const handleReset = () => {
+    const intervalId = setInterval(() => {
+      setResetCount((prevCount) => {
+        if (prevCount <= 0) {
+          clearInterval(intervalId);
+          setFinalDish(null);
+          setIsFinalDish(false);
+          resetAnimations();
+          return 0;
+        }
+        return prevCount - 1;
+      });
+    }, 1000);
+  };
+
+  const resetAnimations = () => {
+    wheelRotate.setValue(0);
+    Animated.parallel([
+      Animated.timing(startingButtonOpacity, {
+        toValue: 0,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+      Animated.timing(wheelOpacity, {
+        toValue: 0,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+      Animated.timing(wheelXTranslate, {
+        duration: 600,
+        toValue: 0,
+        useNativeDriver: true,
+      }),
+    ]).start();
   };
 
   return (
@@ -264,6 +305,28 @@ const Wheel = ({ data }: WheelProps) => {
             justifyContent: "center",
           }}
         >
+          <View
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: 200,
+              borderColor: COLORS.black,
+              borderWidth: 1,
+              borderStyle: "solid",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Text
+              style={{
+                fontFamily: FONTFAMILY.Regular,
+                fontSize: 14,
+                color: COLORS.black,
+              }}
+            >
+              {resetCount}
+            </Text>
+          </View>
           <LottieView
             source={burgerAnimation}
             autoPlay

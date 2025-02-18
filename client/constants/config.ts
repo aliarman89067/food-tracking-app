@@ -1,2 +1,2 @@
-export const BASE_URL = "http://192.168.0.106:3000";
+export const BASE_URL = "http://192.168.18.109:3000";
 export const WEATHER_API = "8942010124125642773a1c3818641143";

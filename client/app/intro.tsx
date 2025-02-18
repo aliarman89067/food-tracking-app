@@ -29,22 +29,24 @@ const Intro = () => {
   };
 
   return (
-    <ScrollView contentContainerStyle={{ flex: 1 }}>
-      <View style={[styles.container, { backgroundColor: COLORS.peach }]}>
-        <IntroStep nameInput={nameInput} setNameInput={setNameInput} />
-        <View
-          style={{ paddingHorizontal: widthPercentage(10), marginBottom: 20 }}
-        >
-          <TouchableOpacity
-            onPress={handleIntroComplete}
-            disabled={!nameInput}
-            style={[styles.buttonContainer, { opacity: nameInput ? 1 : 0.6 }]}
+    <View style={{ height: "100%", width: "100%" }}>
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+        <View style={[styles.container, { backgroundColor: COLORS.peach }]}>
+          <IntroStep nameInput={nameInput} setNameInput={setNameInput} />
+          <View
+            style={{ paddingHorizontal: widthPercentage(10), marginBottom: 20 }}
           >
-            <Text style={styles.buttonText}>Let&apos;s Start</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              onPress={handleIntroComplete}
+              disabled={!nameInput}
+              style={[styles.buttonContainer, { opacity: nameInput ? 1 : 0.6 }]}
+            >
+              <Text style={styles.buttonText}>Let&apos;s Start</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 };
 const styles = StyleSheet.create({

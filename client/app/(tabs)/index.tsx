@@ -19,16 +19,7 @@ const Index = () => {
       }[]
   >(null);
   const [isLoading, setIsLoading] = useState(true);
-  // useEffect(() => {
-  //   const deleteData = async () => {
-  //     console.log("Delete add Data");
-  //     await asyncStorage.removeItem("food-tracking-username");
-  //     await asyncStorage.removeItem("is-intro-seen");
-  //     await asyncStorage.removeItem("food-tracking-data");
-  //     await asyncStorage.removeItem("food-tracking-selected-foods");
-  //   };
-  //   deleteData();
-  // }, []);
+  //
   type FoodsDataType =
     | {
         _id: string;
