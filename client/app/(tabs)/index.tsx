@@ -16,6 +16,7 @@ const Index = () => {
         name: string;
         imageUrl: string;
         cuisineName: string;
+        type: string;
       }[]
   >(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -26,7 +27,20 @@ const Index = () => {
         name: string;
         imageUrl: string;
         cuisineName: string;
+        type: string;
       }[];
+
+  // useEffect(() => {
+  //   const deleteData = async () => {
+  //     console.log("Delete Data");
+  //     await asyncStorage.removeItem("food-tracking-username");
+  //     await asyncStorage.removeItem("food-tracking-data");
+  //     await asyncStorage.removeItem("is-intro-seen");
+  //     await asyncStorage.removeItem("food-tracking-selected-foods");
+  //   };
+  //   deleteData();
+  // }, []);
+
   useEffect(() => {
     const getData = async () => {
       setName(null);

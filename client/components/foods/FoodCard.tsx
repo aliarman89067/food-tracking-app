@@ -39,7 +39,7 @@ const FoodCard = ({
 }: FoodCardProps) => {
   const cardOpacity = useRef(new Animated.Value(0)).current;
 
-  const { isAdd, setIsAdd } = useAddStore();
+  const { setIsAdd } = useAddStore();
 
   useEffect(() => {
     Animated.timing(cardOpacity, {
@@ -173,11 +173,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginTop: 10,
+    padding: 3,
   },
   addButtonText: {
     color: COLORS.white,
     fontFamily: FONTFAMILY.Regular,
-    fontSize: 14,
+    fontSize: 12,
   },
   alreadyText: {
     position: "absolute",

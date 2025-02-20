@@ -5,6 +5,7 @@ import {
   ActivityIndicator,
   FlatList,
   TouchableOpacity,
+  ScrollView,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { router, useLocalSearchParams, usePathname } from "expo-router";
@@ -16,12 +17,17 @@ import { widthPercentage } from "@/utils";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { FONTFAMILY } from "@/constants/fontFamily";
 import asyncStorage from "@react-native-async-storage/async-storage";
+import DishCard from "@/components/foods/DishCard";
+
+type FoodsDataType = {
+  label: string;
+  data: { _id: string; imageUrl: string; name: string }[];
+}[];
+
 const Food = () => {
   const { id, name } = useLocalSearchParams();
   const pathName = usePathname();
-  const [foodsData, setFoodsData] = useState<
-    null | { _id: string; imageUrl: string; name: string }[]
-  >(null);
+  const [foodsData, setFoodsData] = useState<null | FoodsDataType>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [savedFoodIds, setSavedFoodIds] = useState<null | string[]>(null);
 
@@ -30,7 +36,26 @@ const Food = () => {
     const loadFoods = async () => {
       try {
         const { data } = await axios.get(`${BASE_URL}/api/v1/foods/${id}`);
-        setFoodsData(data.data.foods);
+        if (data && data.data) {
+          const types = ["Break Fast", "Dinner & Lunch", "Snacks"];
+          const breakfastData = data.data.foods.filter(
+            (item: any) => item.type === "Break Fast"
+          );
+          const lunchAndDinnerData = data.data.foods.filter(
+            (item: any) => item.type === "Dinner & Lunch"
+          );
+          const snacksData = data.data.foods.filter(
+            (item: any) => item.type === "Snacks"
+          );
+          setFoodsData([
+            { data: breakfastData, label: "Break Fast" },
+            { data: lunchAndDinnerData, label: "Dinner & Lunch" },
+            { data: snacksData, label: "Snacks" },
+          ]);
+        } else {
+          setFoodsData(null);
+        }
+
         const foodData = await asyncStorage.getItem("food-tracking-data");
         if (foodData) {
           const parsedData = JSON.parse(foodData);
@@ -49,57 +74,50 @@ const Food = () => {
   }, [id, pathName]);
 
   return (
-    <View style={styles.container}>
-      {isLoading && !foodsData && (
-        <View>
-          <ActivityIndicator size={30} color={COLORS.orange} />
-        </View>
-      )}
-      {!isLoading && foodsData && (
-        <View style={{ flex: 1 }}>
-          <TouchableOpacity
-            onPress={() => router.push("/foods")}
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 10,
-              paddingVertical: 10,
-            }}
-          >
-            <AntDesign name="arrowleft" size={18} color={COLORS.black} />
-            <Text
+    <ScrollView>
+      <View style={styles.container}>
+        {isLoading && !foodsData && (
+          <View>
+            <ActivityIndicator size={30} color={COLORS.orange} />
+          </View>
+        )}
+        {!isLoading && foodsData && (
+          <View style={{ flex: 1 }}>
+            <TouchableOpacity
+              onPress={() => router.push("/foods")}
               style={{
-                fontFamily: FONTFAMILY.Regular,
-                fontSize: 16,
-                color: COLORS.black,
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 10,
+                paddingVertical: 20,
               }}
             >
-              {name}
-            </Text>
-          </TouchableOpacity>
-          <FlatList
-            data={foodsData}
-            numColumns={2}
-            ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
-            contentContainerStyle={{ marginTop: 20, paddingBottom: 30 }}
-            showsVerticalScrollIndicator={false}
-            keyExtractor={(item) => item._id}
-            ListHeaderComponentStyle={{ marginBottom: 20 }}
-            renderItem={({ item, index }) => (
-              <FoodCard
-                key={item._id}
-                {...item}
-                index={index}
-                isFoodCard
-                cuisineName={name as string}
-                savedFoodIds={savedFoodIds}
-                setSavedFoodIds={setSavedFoodIds}
-              />
-            )}
-          />
-        </View>
-      )}
-    </View>
+              <AntDesign name="arrowleft" size={18} color={COLORS.black} />
+              <Text
+                style={{
+                  fontFamily: FONTFAMILY.Regular,
+                  fontSize: 16,
+                  color: COLORS.black,
+                }}
+              >
+                {name}
+              </Text>
+            </TouchableOpacity>
+            <View style={styles.mapContainer}>
+              {foodsData.map((item) => (
+                <DishCard
+                  key={item.label}
+                  {...item}
+                  savedFoodIds={savedFoodIds}
+                  setSavedFoodIds={setSavedFoodIds}
+                  cuisineName={name as string}
+                />
+              ))}
+            </View>
+          </View>
+        )}
+      </View>
+    </ScrollView>
   );
 };
 
@@ -109,6 +127,9 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     paddingHorizontal: widthPercentage(5),
+  },
+  mapContainer: {
+    gap: 20,
   },
 });
 

@@ -25,6 +25,7 @@ interface WheelProps {
     name: string;
     imageUrl: string;
     cuisineName: string;
+    type: string;
   }> | null;
 }
 
@@ -34,6 +35,7 @@ const Wheel = ({ data }: WheelProps) => {
     name: string;
     imageUrl: string;
     cuisineName: string;
+    type: string;
   }>(null);
   const [showSelectedDish, setShowSelectedDish] = useState(false);
   const [finalDish, setFinalDish] = useState<null | {
@@ -41,6 +43,7 @@ const Wheel = ({ data }: WheelProps) => {
     name: string;
     imageUrl: string;
     cuisineName: string;
+    type: string;
   }>(null);
 
   const [isRetry, setIsRetry] = useState(false);
@@ -275,7 +278,15 @@ const Wheel = ({ data }: WheelProps) => {
 
   const resetAnimations = () => {
     wheelRotate.setValue(0);
+
     Animated.parallel([
+      ...floatingOpacities.map((opacity, index) =>
+        Animated.timing(opacity, {
+          toValue: 0,
+          duration: 400 + index * 250,
+          useNativeDriver: true,
+        })
+      ),
       Animated.timing(startingButtonOpacity, {
         toValue: 0,
         duration: 500,

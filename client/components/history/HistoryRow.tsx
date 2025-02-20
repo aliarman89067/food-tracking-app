@@ -14,23 +14,19 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import asyncStorage from "@react-native-async-storage/async-storage";
 
 interface HistoryRowProps {
-  index: number;
-  _id: string;
   name: string;
   imageUrl: string;
   cuisineName: string;
-  removeHistory: () => void;
   now: number;
+  type: string;
 }
 
 const HistoryRow = ({
-  index,
-  _id,
   name,
   imageUrl,
   cuisineName,
-  removeHistory,
   now,
+  type,
 }: HistoryRowProps) => {
   const formatUnixTime = (unixTime: number) => {
     const date = new Date(unixTime);
@@ -52,8 +48,9 @@ const HistoryRow = ({
         />
         <View style={styles.contentBox}>
           <Text style={styles.name}>{name}</Text>
-          <View style={styles.cuisineBox}>
-            <Text style={styles.cuisineName}>{cuisineName}</Text>
+          <Text style={styles.cuisineName}>{cuisineName}</Text>
+          <View style={styles.typeBox}>
+            <Text style={styles.typeName}>{type}</Text>
           </View>
           <Text>{formatUnixTime(now)}</Text>
         </View>
@@ -97,7 +94,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: COLORS.black,
   },
-  cuisineBox: {
+  typeBox: {
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 100,
@@ -105,10 +102,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  cuisineName: {
+  typeName: {
     fontFamily: FONTFAMILY.Regular,
     fontSize: 13,
     color: COLORS.white,
+  },
+  cuisineName: {
+    fontFamily: FONTFAMILY.Regular,
+    fontSize: 13,
+    color: COLORS.orange,
   },
   deleteButton: {
     backgroundColor: "#fb6376",

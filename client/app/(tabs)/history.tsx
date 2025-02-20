@@ -28,6 +28,7 @@ const History = () => {
         imageUrl: string;
         cuisineName: string;
         now: number;
+        type: string;
       }[]
   >(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -155,12 +156,7 @@ const History = () => {
             contentContainerStyle={{ gap: 15 }}
             showsVerticalScrollIndicator={false}
             renderItem={({ item, index }) => (
-              <HistoryRow
-                key={index}
-                index={index}
-                {...item}
-                removeHistory={() => setData(null)}
-              />
+              <HistoryRow key={index} {...item} />
             )}
           />
         </View>
