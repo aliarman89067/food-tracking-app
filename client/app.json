@@ -15,7 +15,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.ali_arman1.what_to_eat"
     },
     "web": {
       "bundler": "metro",
@@ -48,6 +49,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "8051ea3a-c641-408f-aeff-b4f184c5daa2"
+      }
     }
   }
 }

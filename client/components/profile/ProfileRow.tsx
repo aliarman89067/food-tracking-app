@@ -64,7 +64,7 @@ const ProfileRow = ({
     );
     setTimeout(() => {
       setData((prevData) => prevData?.filter((item) => item._id !== _id) || []);
-    }, 700);
+    }, 500);
   };
   const opacityInterpolate = opacityAnimation.interpolate({
     inputRange: [0, 1],

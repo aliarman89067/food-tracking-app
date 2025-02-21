@@ -23,6 +23,7 @@ const Profile = () => {
     | { _id: string; name: string; imageUrl: string; cuisineName: string }[]
   >(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRemoving, setIsRemoving] = useState(false);
 
   const pathName = usePathname();
 
@@ -52,6 +53,19 @@ const Profile = () => {
   //   };
   //   removeData();
   // }, []);
+
+  const handleRemove = async () => {
+    try {
+      setIsRemoving(true);
+      await asyncStorage.setItem("food-tracking-data", JSON.stringify([]));
+      setData([]);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsRemoving(false);
+    }
+  };
+
   return (
     <View style={styles.container}>
       {isLoading && !data && (
@@ -92,16 +106,46 @@ const Profile = () => {
             height: "100%",
           }}
         >
-          <Text
+          <View
             style={{
-              fontFamily: FONTFAMILY.Regular,
-              fontSize: 18,
-              color: COLORS.black,
-              marginBottom: 10,
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginBottom: 20,
             }}
           >
-            {data.length} {data.length === 1 ? "Item" : "Items"} Added
-          </Text>
+            <Text
+              style={{
+                fontFamily: FONTFAMILY.Regular,
+                fontSize: 18,
+                color: COLORS.black,
+                marginBottom: 10,
+              }}
+            >
+              {data.length} {data.length === 1 ? "Item" : "Items"} Added
+            </Text>
+            <TouchableOpacity
+              onPress={handleRemove}
+              activeOpacity={0.7}
+              disabled={isRemoving}
+              style={{
+                paddingHorizontal: 20,
+                paddingVertical: 10,
+                borderRadius: 5,
+                backgroundColor: "#fb6376",
+              }}
+            >
+              <Text
+                style={{
+                  fontFamily: FONTFAMILY.Regular,
+                  color: COLORS.white,
+                  fontSize: 13,
+                }}
+              >
+                Remove All
+              </Text>
+            </TouchableOpacity>
+          </View>
           <FlatList
             data={data}
             keyExtractor={(item) => item._id}
