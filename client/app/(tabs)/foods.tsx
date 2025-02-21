@@ -12,12 +12,15 @@ import axios from "axios";
 import { COLORS } from "@/constants/Colors";
 import { BASE_URL } from "@/constants/config";
 import FoodCard from "@/components/foods/FoodCard";
+import { usePathname } from "expo-router";
 
 const Foods = () => {
   const [cuisinesData, setCuisinesData] = useState<
     null | { _id: string; foods: string[]; imageUrl: string; name: string }[]
   >(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  const pathName = usePathname();
 
   useEffect(() => {
     const loadData = async () => {

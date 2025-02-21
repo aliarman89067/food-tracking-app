@@ -148,6 +148,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.orange,
     alignItems: "center",
     justifyContent: "center",
+    width: 140,
   },
   cuisineName: {
     fontFamily: FONTFAMILY.Regular,

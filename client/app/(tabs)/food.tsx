@@ -33,6 +33,8 @@ const Food = () => {
 
   useEffect(() => {
     if (!id) return;
+    setIsLoading(true);
+    setFoodsData(null);
     const loadFoods = async () => {
       try {
         const { data } = await axios.get(`${BASE_URL}/api/v1/foods/${id}`);
@@ -74,50 +76,59 @@ const Food = () => {
   }, [id, pathName]);
 
   return (
-    <ScrollView>
-      <View style={styles.container}>
-        {isLoading && !foodsData && (
-          <View>
-            <ActivityIndicator size={30} color={COLORS.orange} />
-          </View>
-        )}
-        {!isLoading && foodsData && (
-          <View style={{ flex: 1 }}>
-            <TouchableOpacity
-              onPress={() => router.push("/foods")}
+    <View style={{ height: "100%", width: "100%" }}>
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+        <View style={styles.container}>
+          {isLoading && !foodsData && (
+            <View
               style={{
-                flexDirection: "row",
+                width: "100%",
+                height: "100%",
                 alignItems: "center",
-                gap: 10,
-                paddingVertical: 20,
+                justifyContent: "center",
               }}
             >
-              <AntDesign name="arrowleft" size={18} color={COLORS.black} />
-              <Text
+              <ActivityIndicator size={30} color={COLORS.orange} />
+            </View>
+          )}
+          {!isLoading && foodsData && (
+            <View style={{ flex: 1 }}>
+              <TouchableOpacity
+                onPress={() => router.push("/foods")}
                 style={{
-                  fontFamily: FONTFAMILY.Regular,
-                  fontSize: 16,
-                  color: COLORS.black,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 10,
+                  paddingVertical: 20,
                 }}
               >
-                {name}
-              </Text>
-            </TouchableOpacity>
-            <View style={styles.mapContainer}>
-              {foodsData.map((item) => (
-                <DishCard
-                  key={item.label}
-                  {...item}
-                  savedFoodIds={savedFoodIds}
-                  setSavedFoodIds={setSavedFoodIds}
-                  cuisineName={name as string}
-                />
-              ))}
+                <AntDesign name="arrowleft" size={18} color={COLORS.black} />
+                <Text
+                  style={{
+                    fontFamily: FONTFAMILY.Regular,
+                    fontSize: 16,
+                    color: COLORS.black,
+                  }}
+                >
+                  {name}
+                </Text>
+              </TouchableOpacity>
+              <View style={styles.mapContainer}>
+                {foodsData.map((item) => (
+                  <DishCard
+                    key={item.label}
+                    {...item}
+                    savedFoodIds={savedFoodIds}
+                    setSavedFoodIds={setSavedFoodIds}
+                    cuisineName={name as string}
+                  />
+                ))}
+              </View>
             </View>
-          </View>
-        )}
-      </View>
-    </ScrollView>
+          )}
+        </View>
+      </ScrollView>
+    </View>
   );
 };
 
