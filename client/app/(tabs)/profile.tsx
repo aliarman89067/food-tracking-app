@@ -16,25 +16,60 @@ import { FONTFAMILY } from "@/constants/fontFamily";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, usePathname } from "expo-router";
 import ProfileRow from "@/components/profile/ProfileRow";
+import ProfileCard from "@/components/profile/ProfileCard";
 
+export type DataType =
+  | {
+      cuisineName: string;
+      items: {
+        _id: string;
+        name: string;
+        imageUrl: string;
+        cuisineName: string;
+      }[];
+    }[]
+  | null;
 const Profile = () => {
-  const [data, setData] = useState<
-    | null
-    | { _id: string; name: string; imageUrl: string; cuisineName: string }[]
-  >(null);
+  const [data, setData] = useState<DataType>();
   const [isLoading, setIsLoading] = useState(true);
   const [isRemoving, setIsRemoving] = useState(false);
 
   const pathName = usePathname();
 
   useEffect(() => {
-    console.log("Profile page mounts");
     const getData = async () => {
       try {
         const foodData = await asyncStorage.getItem("food-tracking-data");
         if (foodData) {
-          const parsedData = JSON.parse(foodData);
-          setData(parsedData);
+          const parsedData = JSON.parse(foodData) as
+            | {
+                _id: string;
+                name: string;
+                imageUrl: string;
+                cuisineName: string;
+              }[]
+            | null;
+          const groupData: Record<
+            string,
+            { cuisineName: string; items: any[] }
+          > | null = {};
+
+          parsedData?.forEach((foodItem) => {
+            if (!groupData[foodItem.cuisineName]) {
+              groupData[foodItem.cuisineName] = {
+                cuisineName: foodItem.cuisineName,
+                items: [],
+              };
+            }
+            groupData[foodItem.cuisineName].items.push({
+              _id: foodItem._id,
+              name: foodItem.name,
+              imageUrl: foodItem.imageUrl,
+              cuisineName: foodItem.cuisineName,
+            });
+          });
+          const result = Object.values(groupData) as DataType;
+          setData(result);
         } else {
           setData(null);
         }
@@ -64,6 +99,14 @@ const Profile = () => {
     } finally {
       setIsRemoving(false);
     }
+  };
+
+  const calculateItems = () => {
+    let length: number = 0;
+    data?.forEach((item) => {
+      length += item.items.length;
+    });
+    return length;
   };
 
   return (
@@ -122,7 +165,7 @@ const Profile = () => {
                 marginBottom: 10,
               }}
             >
-              {data.length} {data.length === 1 ? "Item" : "Items"} Added
+              {calculateItems()} {calculateItems() > 1 ? "Items" : "Item"} Added
             </Text>
             <TouchableOpacity
               onPress={handleRemove}
@@ -148,14 +191,14 @@ const Profile = () => {
           </View>
           <FlatList
             data={data}
-            keyExtractor={(item) => item._id}
+            keyExtractor={(item) => item.cuisineName}
             contentContainerStyle={{ gap: 15 }}
             showsVerticalScrollIndicator={false}
             renderItem={({ item, index }) => (
-              <ProfileRow
-                key={item._id}
-                index={index}
-                {...item}
+              <ProfileCard
+                key={index}
+                cuisineName={item.cuisineName}
+                items={item.items}
                 setData={setData}
               />
             )}

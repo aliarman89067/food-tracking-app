@@ -1,34 +1,24 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Animated,
-} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import React, { Dispatch, SetStateAction, useState } from "react";
-import { heightPercentage } from "@/utils";
 import { FONTFAMILY } from "@/constants/fontFamily";
 import { COLORS } from "@/constants/Colors";
+import { heightPercentage } from "@/utils";
 import Entypo from "@expo/vector-icons/Entypo";
-import DishCardItem from "./DishCardItem";
+import ProfileRow from "./ProfileRow";
+import { DataType } from "@/app/(tabs)/profile";
 
-interface DishCardProps {
-  label: string;
-  data: { _id: string; name: string; imageUrl: string }[];
-  savedFoodIds?: string[] | null;
-  setSavedFoodIds?: Dispatch<SetStateAction<string[] | null>>;
-  cuisineName?: string | undefined;
+interface ProfileCardProps {
+  cuisineName: string;
+  items: { _id: string; name: string; imageUrl: string; cuisineName: string }[];
+  setData: Dispatch<SetStateAction<DataType | undefined>>;
 }
 
-const DishCard = ({
-  label,
-  data,
-  setSavedFoodIds,
-  savedFoodIds,
+export default function ProfileCard({
   cuisineName,
-}: DishCardProps) => {
+  items,
+  setData,
+}: ProfileCardProps) {
   const [show, setShow] = useState(false);
-
   return (
     <View style={styles.container}>
       <TouchableOpacity
@@ -44,7 +34,7 @@ const DishCard = ({
       >
         <View style={{ flexDirection: "row", alignItems: "center", gap: 2 }}>
           <Text style={styles.labelText}>
-            ({data.length}) {label}
+            ({items.length}) {cuisineName}
           </Text>
           {show ? (
             <Entypo name="chevron-small-up" size={24} color={COLORS.black} />
@@ -55,21 +45,19 @@ const DishCard = ({
       </TouchableOpacity>
       {show && (
         <View style={styles.mapContainer}>
-          {data.map((item) => (
-            <DishCardItem
+          {items.map((item, index) => (
+            <ProfileRow
               key={item._id}
-              label={label}
-              item={item}
-              cuisineName={cuisineName}
-              savedFoodIds={savedFoodIds}
-              setSavedFoodIds={setSavedFoodIds}
+              setData={setData}
+              {...item}
+              index={index}
             />
           ))}
         </View>
       )}
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -135,6 +123,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     flexWrap: "wrap",
     overflow: "hidden",
+    gap: 15,
   },
   animationBox: {
     width: 120,
@@ -143,5 +132,3 @@ const styles = StyleSheet.create({
     top: "7%",
   },
 });
-
-export default DishCard;

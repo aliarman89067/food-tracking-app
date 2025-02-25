@@ -95,19 +95,24 @@ const Food = () => {
             <View style={{ flex: 1 }}>
               <TouchableOpacity
                 onPress={() => router.push("/foods")}
+                activeOpacity={0.7}
                 style={{
+                  width: "100%",
                   flexDirection: "row",
                   alignItems: "center",
                   gap: 10,
-                  paddingVertical: 20,
+                  marginVertical: 20,
+                  paddingBottom: 4,
+                  borderBottomColor: COLORS.peach,
+                  borderBottomWidth: 1,
                 }}
               >
-                <AntDesign name="arrowleft" size={18} color={COLORS.black} />
+                <AntDesign name="arrowleft" size={18} color={COLORS.peach} />
                 <Text
                   style={{
                     fontFamily: FONTFAMILY.Regular,
                     fontSize: 16,
-                    color: COLORS.black,
+                    color: COLORS.peach,
                   }}
                 >
                   {name}

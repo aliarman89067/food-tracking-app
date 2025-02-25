@@ -12,6 +12,7 @@ import { widthPercentage } from "@/utils";
 import { FONTFAMILY } from "@/constants/fontFamily";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import asyncStorage from "@react-native-async-storage/async-storage";
+import { DataType } from "@/app/(tabs)/profile";
 
 interface ProfileRowProps {
   index: number;
@@ -19,12 +20,7 @@ interface ProfileRowProps {
   name: string;
   imageUrl: string;
   cuisineName: string;
-  setData: Dispatch<
-    SetStateAction<
-      | null
-      | { _id: string; name: string; imageUrl: string; cuisineName: string }[]
-    >
-  >;
+  setData: Dispatch<SetStateAction<DataType | undefined>>;
 }
 
 const ProfileRow = ({
@@ -118,8 +114,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     shadowColor: "rgba(0,0,0,0.5)",
     shadowOffset: { width: 0, height: 0 },
-    shadowRadius: 10,
-    elevation: 5,
+    shadowRadius: 20,
+    elevation: 3,
     shadowOpacity: 0.4,
   },
   detailBox: {
