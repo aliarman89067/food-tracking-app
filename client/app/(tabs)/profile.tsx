@@ -199,6 +199,7 @@ const Profile = () => {
                 key={index}
                 cuisineName={item.cuisineName}
                 items={item.items}
+                data={data}
                 setData={setData}
               />
             )}

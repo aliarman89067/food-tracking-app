@@ -15,20 +15,20 @@ import asyncStorage from "@react-native-async-storage/async-storage";
 import { DataType } from "@/app/(tabs)/profile";
 
 interface ProfileRowProps {
-  index: number;
   _id: string;
   name: string;
   imageUrl: string;
   cuisineName: string;
+  data: DataType | undefined;
   setData: Dispatch<SetStateAction<DataType | undefined>>;
 }
 
 const ProfileRow = ({
-  index,
   _id,
   name,
   imageUrl,
   cuisineName,
+  data,
   setData,
 }: ProfileRowProps) => {
   const opacityAnimation = useRef(new Animated.Value(0)).current;
@@ -58,8 +58,27 @@ const ProfileRow = ({
       "food-tracking-data",
       JSON.stringify(filteredData)
     );
+
     setTimeout(() => {
-      setData((prevData) => prevData?.filter((item) => item._id !== _id) || []);
+      setData((prevData) => {
+        if (!prevData) return prevData;
+
+        return prevData
+          .map((item) => {
+            if (item.cuisineName === cuisineName) {
+              if (item.items.length > 1) {
+                return {
+                  ...item,
+                  items: item.items.filter((foodItem) => foodItem._id !== _id),
+                };
+              } else {
+                return null;
+              }
+            }
+            return item;
+          })
+          .filter((item) => item !== null);
+      });
     }, 500);
   };
   const opacityInterpolate = opacityAnimation.interpolate({

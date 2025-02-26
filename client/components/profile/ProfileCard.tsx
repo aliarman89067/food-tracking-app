@@ -10,12 +10,14 @@ import { DataType } from "@/app/(tabs)/profile";
 interface ProfileCardProps {
   cuisineName: string;
   items: { _id: string; name: string; imageUrl: string; cuisineName: string }[];
+  data: DataType | undefined;
   setData: Dispatch<SetStateAction<DataType | undefined>>;
 }
 
 export default function ProfileCard({
   cuisineName,
   items,
+  data,
   setData,
 }: ProfileCardProps) {
   const [show, setShow] = useState(false);
@@ -48,9 +50,9 @@ export default function ProfileCard({
           {items.map((item, index) => (
             <ProfileRow
               key={item._id}
+              data={data}
               setData={setData}
               {...item}
-              index={index}
             />
           ))}
         </View>

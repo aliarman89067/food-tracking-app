@@ -6,6 +6,7 @@ import {
   Animated,
   Easing,
   TouchableOpacity,
+  ToastAndroid,
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { heightPercentage, widthPercentage } from "@/utils";
@@ -45,6 +46,8 @@ const Wheel = ({ data }: WheelProps) => {
     cuisineName: string;
     type: string;
   }>(null);
+  const [categoryIndex, setCategoryIndex] = useState(0);
+  const categories = ["Break Fast", "Dinner & Lunch", "Snacks"];
 
   const [isRetry, setIsRetry] = useState(false);
 
@@ -63,6 +66,7 @@ const Wheel = ({ data }: WheelProps) => {
   const wheelRotate = useRef(new Animated.Value(0)).current;
   const wheelOpacity = useRef(new Animated.Value(0)).current;
   const dishContainerOpacity = useRef(new Animated.Value(0)).current;
+  const switchButtonOpacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     const animations = floatingAnimes.map((anime, index) =>
@@ -87,8 +91,19 @@ const Wheel = ({ data }: WheelProps) => {
 
   const handleStart = () => {
     if (!data) return;
-    const randomDishNumber = Math.ceil(Math.random() * data.length - 1);
-    const randomDish = data[randomDishNumber];
+    const filteredData = data.filter(
+      (item) => item.type === categories[categoryIndex]
+    );
+    if (filteredData.length === 0) {
+      ToastAndroid.showWithGravity(
+        `You have 0 ${categories[categoryIndex]} Added`,
+        ToastAndroid.SHORT,
+        ToastAndroid.CENTER
+      );
+      return;
+    }
+    const randomDishNumber = Math.ceil(Math.random() * filteredData.length - 1);
+    const randomDish = filteredData[randomDishNumber];
     setSelectedDish(randomDish);
     Animated.parallel([
       ...floatingOpacities.map((opacity, index) =>
@@ -98,6 +113,11 @@ const Wheel = ({ data }: WheelProps) => {
           useNativeDriver: true,
         })
       ),
+      Animated.timing(switchButtonOpacity, {
+        duration: 200,
+        toValue: 1,
+        useNativeDriver: true,
+      }),
       Animated.timing(startingButtonOpacity, {
         toValue: 1,
         duration: 500,
@@ -170,6 +190,10 @@ const Wheel = ({ data }: WheelProps) => {
   const dishContainerOpacityInter = dishContainerOpacity.interpolate({
     inputRange: [0, 1],
     outputRange: [0, 1],
+  });
+  const switchButtonOpacityInter = switchButtonOpacity.interpolate({
+    inputRange: [0, 1],
+    outputRange: [1, 0],
   });
 
   const handleTryAgain = () => {
@@ -297,6 +321,12 @@ const Wheel = ({ data }: WheelProps) => {
         duration: 500,
         useNativeDriver: true,
       }),
+      Animated.timing(switchButtonOpacity, {
+        duration: 200,
+        toValue: 0,
+        delay: 400,
+        useNativeDriver: true,
+      }),
       Animated.timing(wheelXTranslate, {
         duration: 600,
         toValue: 0,
@@ -304,7 +334,6 @@ const Wheel = ({ data }: WheelProps) => {
       }),
     ]).start();
   };
-
   return (
     <View style={styles.container}>
       {isFinalDish && finalDish && (
@@ -453,6 +482,33 @@ const Wheel = ({ data }: WheelProps) => {
           { pointerEvents: !!selectedDish ? "none" : "auto" },
         ]}
       >
+        <Animated.View
+          style={[
+            styles.switchButtonContainer,
+            { opacity: switchButtonOpacityInter },
+          ]}
+        >
+          <TouchableOpacity
+            onPress={() => {
+              if (categoryIndex === 0) {
+                setCategoryIndex(1);
+              } else if (categoryIndex === 1) {
+                setCategoryIndex(2);
+              } else {
+                setCategoryIndex(0);
+              }
+            }}
+            activeOpacity={0.7}
+          >
+            <LinearGradient
+              colors={[COLORS.peach, COLORS.orange, COLORS.peach]}
+              style={styles.switchButtonBox}
+            >
+              <Text style={styles.switchText}>{categories[categoryIndex]}</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        </Animated.View>
+
         <Animated.Image
           source={wheel}
           alt="Wheel Image"
@@ -569,6 +625,11 @@ const Wheel = ({ data }: WheelProps) => {
             end={{ x: 1, y: 0 }}
           >
             <Text style={styles.emptyCtaText}>Tell me what to eat!</Text>
+            <Text
+              style={[styles.emptyCtaText, { fontFamily: FONTFAMILY.Bold }]}
+            >
+              {categories[categoryIndex]}
+            </Text>
           </LinearGradient>
         </TouchableOpacity>
       </Animated.View>
@@ -598,8 +659,8 @@ const styles = StyleSheet.create({
   },
   floatingBox: {
     position: "absolute",
-    width: 100,
-    height: 100,
+    width: 80,
+    height: 80,
     borderRadius: 7,
     padding: 5,
     backgroundColor: COLORS.white,
@@ -614,7 +675,7 @@ const styles = StyleSheet.create({
   emptyCtaGradient: {
     marginTop: 40,
     width: "100%",
-    height: 60,
+    height: 70,
     borderRadius: 100,
     display: "flex",
     alignItems: "center",
@@ -623,7 +684,7 @@ const styles = StyleSheet.create({
   emptyCtaText: {
     color: COLORS.white,
     fontFamily: FONTFAMILY.Medium,
-    fontSize: 18,
+    fontSize: 16,
   },
   ctaText: {
     color: COLORS.white,
@@ -684,6 +745,24 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flexDirection: "row",
     gap: 5,
+  },
+  switchButtonContainer: {
+    position: "absolute",
+    top: "50%",
+    transform: [{ translateY: -35 }],
+    zIndex: 10,
+  },
+  switchButtonBox: {
+    width: 130,
+    height: 60,
+    borderRadius: 200,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  switchText: {
+    color: COLORS.white,
+    fontSize: 14,
+    fontFamily: FONTFAMILY.Medium,
   },
 });
 
