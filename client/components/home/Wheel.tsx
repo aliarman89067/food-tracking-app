@@ -19,6 +19,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import LottieView from "lottie-react-native";
 import burgerAnimation from "@/assets/animations/burger.json";
 import asyncStorage from "@react-native-async-storage/async-storage";
+import Entypo from "@expo/vector-icons/Entypo";
 
 interface WheelProps {
   data: Array<{
@@ -67,8 +68,66 @@ const Wheel = ({ data }: WheelProps) => {
   const wheelOpacity = useRef(new Animated.Value(0)).current;
   const dishContainerOpacity = useRef(new Animated.Value(0)).current;
   const switchButtonOpacity = useRef(new Animated.Value(0)).current;
+  const switchIconY = useRef(new Animated.Value(0)).current;
+  const rippleScaleX = useRef(new Animated.Value(0)).current;
+  const rippleScaleY = useRef(new Animated.Value(0)).current;
+  const rippleOpacity = useRef(new Animated.Value(0)).current;
+  const rippleScaleX2 = useRef(new Animated.Value(0)).current;
+  const rippleScaleY2 = useRef(new Animated.Value(0)).current;
+  const rippleOpacity2 = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
+    Animated.loop(
+      Animated.parallel([
+        Animated.sequence([
+          Animated.timing(switchIconY, {
+            duration: 500,
+            toValue: 1,
+            useNativeDriver: true,
+          }),
+          Animated.timing(switchIconY, {
+            duration: 500,
+            toValue: 0,
+            useNativeDriver: true,
+          }),
+        ]),
+        Animated.timing(rippleScaleX, {
+          duration: 1000,
+          toValue: 1,
+          useNativeDriver: true,
+        }),
+        Animated.timing(rippleScaleY, {
+          duration: 1000,
+          toValue: 1,
+          useNativeDriver: true,
+        }),
+        Animated.timing(rippleOpacity, {
+          duration: 1000,
+          toValue: 1,
+          delay: 100,
+          useNativeDriver: true,
+        }),
+        Animated.timing(rippleScaleX2, {
+          duration: 1200,
+          delay: 200,
+          toValue: 1,
+          useNativeDriver: true,
+        }),
+        Animated.timing(rippleScaleY2, {
+          duration: 1200,
+          delay: 200,
+          toValue: 1,
+          useNativeDriver: true,
+        }),
+        Animated.timing(rippleOpacity2, {
+          duration: 1000,
+          toValue: 1,
+          delay: 500,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+
     const animations = floatingAnimes.map((anime, index) =>
       Animated.loop(
         Animated.sequence([
@@ -192,6 +251,34 @@ const Wheel = ({ data }: WheelProps) => {
     outputRange: [0, 1],
   });
   const switchButtonOpacityInter = switchButtonOpacity.interpolate({
+    inputRange: [0, 1],
+    outputRange: [1, 0],
+  });
+  const switchIconYInter = switchIconY.interpolate({
+    inputRange: [0, 1],
+    outputRange: [-2, 2],
+  });
+  const rippleScaleXInter = rippleScaleX.interpolate({
+    inputRange: [0, 1],
+    outputRange: [1, 1.2],
+  });
+  const rippleScaleYInter = rippleScaleY.interpolate({
+    inputRange: [0, 1],
+    outputRange: [1, 1.4],
+  });
+  const rippleOpacityInter = rippleOpacity.interpolate({
+    inputRange: [0, 1],
+    outputRange: [1, 0],
+  });
+  const rippleScaleXInter2 = rippleScaleX2.interpolate({
+    inputRange: [0, 1],
+    outputRange: [1, 1.1],
+  });
+  const rippleScaleYInter2 = rippleScaleY2.interpolate({
+    inputRange: [0, 1],
+    outputRange: [1, 1.3],
+  });
+  const rippleOpacityInter2 = rippleOpacity2.interpolate({
     inputRange: [0, 1],
     outputRange: [1, 0],
   });
@@ -488,6 +575,30 @@ const Wheel = ({ data }: WheelProps) => {
             { opacity: switchButtonOpacityInter },
           ]}
         >
+          <Animated.View
+            style={[
+              styles.rippleContainer,
+              {
+                transform: [
+                  { scaleX: rippleScaleXInter },
+                  { scaleY: rippleScaleYInter },
+                ],
+                opacity: rippleOpacityInter,
+              },
+            ]}
+          ></Animated.View>
+          <Animated.View
+            style={[
+              styles.rippleContainer,
+              {
+                transform: [
+                  { scaleX: rippleScaleXInter2 },
+                  { scaleY: rippleScaleYInter2 },
+                ],
+                opacity: rippleOpacityInter2,
+              },
+            ]}
+          ></Animated.View>
           <TouchableOpacity
             onPress={() => {
               if (categoryIndex === 0) {
@@ -505,6 +616,11 @@ const Wheel = ({ data }: WheelProps) => {
               style={styles.switchButtonBox}
             >
               <Text style={styles.switchText}>{categories[categoryIndex]}</Text>
+              <Animated.View
+                style={{ transform: [{ translateY: switchIconYInter }] }}
+              >
+                <Entypo name="chevron-down" size={20} color={COLORS.white} />
+              </Animated.View>
             </LinearGradient>
           </TouchableOpacity>
         </Animated.View>
@@ -753,16 +869,28 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   switchButtonBox: {
-    width: 130,
+    width: 140,
     height: 60,
     borderRadius: 200,
     alignItems: "center",
     justifyContent: "center",
+    flexDirection: "row",
+    gap: 2,
   },
   switchText: {
     color: COLORS.white,
     fontSize: 14,
     fontFamily: FONTFAMILY.Medium,
+  },
+  rippleContainer: {
+    position: "absolute",
+    width: 140,
+    height: 60,
+    borderRadius: 200,
+    backgroundColor: "transparent",
+    borderWidth: 2,
+    borderStyle: "solid",
+    borderColor: COLORS.peach,
   },
 });
 

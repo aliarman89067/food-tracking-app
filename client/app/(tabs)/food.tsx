@@ -3,7 +3,6 @@ import {
   Text,
   StyleSheet,
   ActivityIndicator,
-  FlatList,
   TouchableOpacity,
   ScrollView,
 } from "react-native";
@@ -21,7 +20,7 @@ import DishCard from "@/components/foods/DishCard";
 
 type FoodsDataType = {
   label: string;
-  data: { _id: string; imageUrl: string; name: string }[];
+  data: { _id: string; imageUrl: string; name: string; type: string }[];
 }[];
 
 const Food = () => {
@@ -74,7 +73,6 @@ const Food = () => {
     };
     loadFoods();
   }, [id, pathName]);
-
   return (
     <View style={{ height: "100%", width: "100%" }}>
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>

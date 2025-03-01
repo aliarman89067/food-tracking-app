@@ -1,13 +1,27 @@
-import { View, ActivityIndicator } from "react-native";
+import {
+  View,
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  Image,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import asyncStorage from "@react-native-async-storage/async-storage";
 import { router, usePathname } from "expo-router";
 import { COLORS } from "@/constants/Colors";
 import EmptyGreeting from "@/components/intro/EmptyGreeting";
 import Wheel from "@/components/home/Wheel";
+import { useNavigation } from "expo-router";
+import { heightPercentage, widthPercentage } from "@/utils";
+import { FONTFAMILY } from "@/constants/fontFamily";
+import { messageCloud } from "@/constants/Images";
+import MessageCloud from "@/components/messageCloud";
 
 const Index = () => {
+  const navigation = useNavigation();
   const pathName = usePathname();
+  const [isAnimationSeen, setIsAnimationSeen] = useState(true);
   const [name, setName] = useState<string | null>("");
   const [data, setData] = useState<
     | null
@@ -37,6 +51,7 @@ const Index = () => {
   //     await asyncStorage.removeItem("food-tracking-data");
   //     await asyncStorage.removeItem("is-intro-seen");
   //     await asyncStorage.removeItem("food-tracking-selected-foods");
+  //     await asyncStorage.removeItem("food-tracking-home-walkthrough");
   //   };
   //   deleteData();
   // }, []);
@@ -47,6 +62,17 @@ const Index = () => {
       setData(null);
       setIsLoading(true);
       try {
+        const isAnimeSeen = await asyncStorage.getItem(
+          "food-tracking-home-walkthrough"
+        );
+        if (isAnimeSeen !== "true") {
+          navigation.setOptions({ tabBarStyle: { opacity: 0 } });
+          setIsAnimationSeen(false);
+        } else {
+          navigation.setOptions({ tabBarStyle: { opacity: 1 } });
+          setIsAnimationSeen(true);
+        }
+
         const ownerName = await asyncStorage.getItem("food-tracking-username");
         setName(ownerName);
 
@@ -63,9 +89,15 @@ const Index = () => {
     };
     getData();
   }, [pathName]);
-
+  console.log(isAnimationSeen);
   return (
     <>
+      {!isLoading && !isAnimationSeen && name && (
+        <View style={styles.animationContainer}>
+          <MessageCloud resetState={setIsAnimationSeen} />
+          <EmptyGreeting name={name} />
+        </View>
+      )}
       {isLoading && (
         <View
           style={{
@@ -78,12 +110,24 @@ const Index = () => {
           <ActivityIndicator size={30} color={COLORS.orange} />
         </View>
       )}
-      {!isLoading && name && (!data || (data && data.length < 1)) && (
-        <EmptyGreeting name={name} />
+      {!isLoading &&
+        name &&
+        (!data || (data && data.length < 1)) &&
+        isAnimationSeen && <EmptyGreeting name={name} />}
+      {!isLoading && data && data.length > 0 && isAnimationSeen && (
+        <Wheel data={data} />
       )}
-      {!isLoading && data && data.length > 0 && <Wheel data={data} />}
     </>
   );
 };
+
+const styles = StyleSheet.create({
+  animationContainer: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
+    position: "relative",
+  },
+});
 
 export default Index;

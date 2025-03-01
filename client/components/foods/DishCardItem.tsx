@@ -17,6 +17,7 @@ interface DishCardProps {
     _id: string;
     imageUrl: string;
     name: string;
+    type: string;
   };
 }
 
@@ -29,17 +30,18 @@ export default function DishCardItem({
 }: DishCardProps) {
   const [currentFoodId, setCurrentFoodId] = useState("");
   const { setIsAdd } = useAddStore();
-
   const handleAdd = async ({
     _id,
     name,
     imageUrl,
     cuisineName,
+    cuisineType,
   }: {
     _id: string;
     name: string;
     imageUrl: string;
     cuisineName: string;
+    cuisineType: string;
   }) => {
     setCurrentFoodId(_id);
     setIsAdd(false);
@@ -54,7 +56,7 @@ export default function DishCardItem({
       await asyncStorage.setItem(
         "food-tracking-data",
         JSON.stringify([
-          { _id, name, imageUrl, cuisineName, type: label },
+          { _id, name, imageUrl, cuisineName, type: label, cuisineType },
           ...JSON.parse(prevData),
         ])
       );
@@ -99,6 +101,7 @@ export default function DishCardItem({
             name: item.name,
             imageUrl: item.imageUrl,
             cuisineName: cuisineName!,
+            cuisineType: item.type,
           })
         }
         disabled={savedFoodIds?.includes(item._id)}

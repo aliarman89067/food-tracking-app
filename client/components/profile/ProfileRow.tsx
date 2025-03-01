@@ -19,7 +19,7 @@ interface ProfileRowProps {
   name: string;
   imageUrl: string;
   cuisineName: string;
-  data: DataType | undefined;
+  cuisineType: string;
   setData: Dispatch<SetStateAction<DataType | undefined>>;
 }
 
@@ -28,7 +28,7 @@ const ProfileRow = ({
   name,
   imageUrl,
   cuisineName,
-  data,
+  cuisineType,
   setData,
 }: ProfileRowProps) => {
   const opacityAnimation = useRef(new Animated.Value(0)).current;
@@ -109,8 +109,11 @@ const ProfileRow = ({
         />
         <View style={styles.contentBox}>
           <Text style={styles.name}>{name}</Text>
+
+          <Text style={styles.cuisineName}>{cuisineName}</Text>
+
           <View style={styles.cuisineBox}>
-            <Text style={styles.cuisineName}>{cuisineName}</Text>
+            <Text style={styles.cuisineType}>{cuisineType}</Text>
           </View>
         </View>
       </View>
@@ -163,9 +166,13 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.orange,
     alignItems: "center",
     justifyContent: "center",
-    width: 140,
   },
   cuisineName: {
+    fontFamily: FONTFAMILY.Regular,
+    fontSize: 13,
+    color: COLORS.orange,
+  },
+  cuisineType: {
     fontFamily: FONTFAMILY.Regular,
     fontSize: 13,
     color: COLORS.white,

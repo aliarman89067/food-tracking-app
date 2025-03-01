@@ -10,12 +10,11 @@ import {
 import React, { useEffect, useState } from "react";
 import asyncStorage from "@react-native-async-storage/async-storage";
 import { COLORS } from "@/constants/Colors";
-import { heightPercentage, widthPercentage } from "@/utils";
+import { widthPercentage } from "@/utils";
 import { emptyCart } from "@/constants/Images";
 import { FONTFAMILY } from "@/constants/fontFamily";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, usePathname } from "expo-router";
-import ProfileRow from "@/components/profile/ProfileRow";
 import ProfileCard from "@/components/profile/ProfileCard";
 
 export type DataType =
@@ -26,6 +25,7 @@ export type DataType =
         name: string;
         imageUrl: string;
         cuisineName: string;
+        cuisineType: string;
       }[];
     }[]
   | null;
@@ -47,6 +47,7 @@ const Profile = () => {
                 name: string;
                 imageUrl: string;
                 cuisineName: string;
+                cuisineType: string;
               }[]
             | null;
           const groupData: Record<
@@ -66,6 +67,7 @@ const Profile = () => {
               name: foodItem.name,
               imageUrl: foodItem.imageUrl,
               cuisineName: foodItem.cuisineName,
+              cuisineType: foodItem.cuisineType,
             });
           });
           const result = Object.values(groupData) as DataType;

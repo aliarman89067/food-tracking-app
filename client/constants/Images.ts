@@ -6,6 +6,7 @@ import inputBg from "@/assets/app-images/input-bg-02.png";
 import emptyCart from "@/assets/app-images/empty-cart.png";
 import wheel from "@/assets/app-images/wheel.png";
 import emptyHistory from "@/assets/app-images/emptyHistory.png";
+import messageCloud from "@/assets/app-images/messageCloud.png";
 
 export {
   house,
@@ -16,4 +17,5 @@ export {
   emptyCart,
   wheel,
   emptyHistory,
+  messageCloud,
 };

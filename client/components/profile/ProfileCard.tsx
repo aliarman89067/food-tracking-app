@@ -9,7 +9,13 @@ import { DataType } from "@/app/(tabs)/profile";
 
 interface ProfileCardProps {
   cuisineName: string;
-  items: { _id: string; name: string; imageUrl: string; cuisineName: string }[];
+  items: {
+    _id: string;
+    name: string;
+    imageUrl: string;
+    cuisineName: string;
+    cuisineType: string;
+  }[];
   data: DataType | undefined;
   setData: Dispatch<SetStateAction<DataType | undefined>>;
 }
@@ -31,29 +37,31 @@ export default function ProfileCard({
           paddingVertical: 10,
           paddingHorizontal: 20,
           borderRadius: 200,
-          backgroundColor: "#d3d3d3",
+          backgroundColor: COLORS.peach,
         }}
       >
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 2 }}>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 2,
+          }}
+        >
           <Text style={styles.labelText}>
             ({items.length}) {cuisineName}
           </Text>
           {show ? (
-            <Entypo name="chevron-small-up" size={24} color={COLORS.black} />
+            <Entypo name="chevron-small-up" size={24} color={COLORS.white} />
           ) : (
-            <Entypo name="chevron-small-down" size={24} color={COLORS.black} />
+            <Entypo name="chevron-small-down" size={24} color={COLORS.white} />
           )}
         </View>
       </TouchableOpacity>
       {show && (
         <View style={styles.mapContainer}>
-          {items.map((item, index) => (
-            <ProfileRow
-              key={item._id}
-              data={data}
-              setData={setData}
-              {...item}
-            />
+          {items.map((item) => (
+            <ProfileRow key={item._id} setData={setData} {...item} />
           ))}
         </View>
       )}
@@ -69,8 +77,8 @@ const styles = StyleSheet.create({
   },
   labelText: {
     fontFamily: FONTFAMILY.Regular,
-    color: COLORS.black,
-    fontSize: 18,
+    color: COLORS.white,
+    fontSize: 16,
   },
   card: {
     position: "relative",

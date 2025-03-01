@@ -14,7 +14,7 @@ import DishCardItem from "./DishCardItem";
 
 interface DishCardProps {
   label: string;
-  data: { _id: string; name: string; imageUrl: string }[];
+  data: { _id: string; name: string; imageUrl: string; type: string }[];
   savedFoodIds?: string[] | null;
   setSavedFoodIds?: Dispatch<SetStateAction<string[] | null>>;
   cuisineName?: string | undefined;
@@ -39,23 +39,73 @@ const DishCard = ({
           paddingVertical: 10,
           paddingHorizontal: 20,
           borderRadius: 200,
-          backgroundColor: "#d3d3d3",
+          backgroundColor: COLORS.peach,
         }}
       >
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 2 }}>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 2,
+          }}
+        >
           <Text style={styles.labelText}>
             ({data.length}) {label}
           </Text>
           {show ? (
-            <Entypo name="chevron-small-up" size={24} color={COLORS.black} />
+            <View
+              style={{ flexDirection: "row", alignItems: "center", gap: 1 }}
+            >
+              <Text
+                style={{
+                  color: COLORS.white,
+                  fontSize: 14,
+                  fontFamily: FONTFAMILY.Regular,
+                }}
+              >
+                Show Less
+              </Text>
+              <Entypo name="chevron-small-up" size={24} color={COLORS.white} />
+            </View>
           ) : (
-            <Entypo name="chevron-small-down" size={24} color={COLORS.black} />
+            <View
+              style={{ flexDirection: "row", alignItems: "center", gap: 1 }}
+            >
+              <Text
+                style={{
+                  color: COLORS.white,
+                  fontSize: 14,
+                  fontFamily: FONTFAMILY.Regular,
+                }}
+              >
+                Show All
+              </Text>
+              <Entypo
+                name="chevron-small-down"
+                size={24}
+                color={COLORS.white}
+              />
+            </View>
           )}
         </View>
       </TouchableOpacity>
-      {show && (
+      {show ? (
         <View style={styles.mapContainer}>
           {data.map((item) => (
+            <DishCardItem
+              key={item._id}
+              label={label}
+              item={item}
+              cuisineName={cuisineName}
+              savedFoodIds={savedFoodIds}
+              setSavedFoodIds={setSavedFoodIds}
+            />
+          ))}
+        </View>
+      ) : (
+        <View style={styles.mapContainer}>
+          {data.slice(0, 2).map((item) => (
             <DishCardItem
               key={item._id}
               label={label}
@@ -74,13 +124,13 @@ const DishCard = ({
 const styles = StyleSheet.create({
   container: {
     flexDirection: "column",
-    gap: 20,
+    gap: 10,
     width: "100%",
   },
   labelText: {
     fontFamily: FONTFAMILY.Regular,
-    color: COLORS.black,
-    fontSize: 18,
+    color: COLORS.white,
+    fontSize: 16,
   },
   card: {
     position: "relative",

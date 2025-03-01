@@ -20,7 +20,7 @@ const Foods = () => {
   >(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const pathName = usePathname();
+  // const pathName = usePathname();
 
   useEffect(() => {
     const loadData = async () => {
